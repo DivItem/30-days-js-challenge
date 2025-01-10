@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(90deg, #1CB5E0 0%, #0D5893 100%);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .weather-app {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 315px;
+    }
+
+    .weather-app h1 {
+      padding: 0;
+      margin: 0;
+    }
+
+    .weather-app p {
+      margin: 0 0 10px 0;
+      padding: 0;
+    }
+
+    input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .buttons {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #searchBtn {
+      background: #28a745;
+      color: #fff;
+      transition: all .3s;
+    }
+
+    #resetBtn {
+      background: #dc3545;
+      color: #fff;
+      transition: all .3s;
+    }
+
+    #searchBtn:hover, #resetBtn:hover {
+      box-shadow: 0 2px 3px #aaa;
+    }
+    .details {
+      margin-top: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .card {
+      background: #f0f8ff;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="weather-app">
+    <h1>Weather App</h1>
+    <p>Search by typing your city name</p>
+    <input type="text" id="location" placeholder="Type location">
+    <div class="buttons">
+      <button id="searchBtn">Search</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+    <div id="weatherDetails" class="details">
+      <h2 id="temperature">--°</h2>
+      <p id="condition">Condition: --</p>
+      <p id="high-low">High/Low: -- / --</p>
+      <div class="grid">
+        <div class="card">
+          <p>Humidity</p>
+          <p id="humidity">--%</p>
+        </div>
+        <div class="card">
+          <p>Wind</p>
+          <p id="wind">-- kph</p>
+        </div>
+        <div class="card">
+          <p>Pressure</p>
+          <p id="pressure">-- mb</p>
+        </div>
+        <div class="card">
+          <p>Visibility</p>
+          <p id="visibility">-- km</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('searchBtn').addEventListener('click', () => {
+      const location = document.getElementById('location').value;
+      if (!location) {
+        alert('Please enter a location');
+        return;
+      }
+      fetchWeather(location);
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      document.getElementById('location').value = '';
+      resetWeatherDetails();
+    });
+
+    function resetWeatherDetails() {
+      document.getElementById('temperature').textContent = '--°';
+      document.getElementById('condition').textContent = 'Condition: --';
+      document.getElementById('high-low').textContent = 'High/Low: -- / --';
+      document.getElementById('humidity').textContent = '--%';
+      document.getElementById('wind').textContent = '-- kph';
+      document.getElementById('pressure').textContent = '-- mb';
+      document.getElementById('visibility').textContent = '-- km';
+    }
+
+    async function fetchWeather(location) {
+      const apiKey = '62694a8b7d4b4c5f937185228251001'; // Your WeatherAPI key
+      const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}&aqi=no`;
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Location not found');
+        const data = await response.json();
+        updateWeatherDetails(data);
+      } catch (error) {
+        console.error('Error fetching weather data:', error);
+        alert('Unable to fetch weather data. Please check the location or try again later.');
+      }
+    }
+
+    function updateWeatherDetails(data) {
+      const temperature = data.current.temp_c; // Temperature in Celsius
+      const condition = data.current.condition.text; // Weather condition
+      const high = data.forecast?.forecastday?.[0]?.day?.maxtemp_c || '--'; // High temp (requires forecast endpoint)
+      const low = data.forecast?.forecastday?.[0]?.day?.mintemp_c || '--'; // Low temp (requires forecast endpoint)
+      const humidity = data.current.humidity; // Humidity percentage
+      const wind = data.current.wind_kph; // Wind speed in kph
+      const pressure = data.current.pressure_mb; // Pressure in mb
+      const visibility = data.current.vis_km; // Visibility in km
+
+      document.getElementById('temperature').textContent = `${temperature}°C`;
+      document.getElementById('condition').textContent = `Condition: ${condition}`;
+      document.getElementById('high-low').textContent = `High/Low: ${high}°C / ${low}°C`;
+      document.getElementById('humidity').textContent = `${humidity}%`;
+      document.getElementById('wind').textContent = `${wind} kph`;
+      document.getElementById('pressure').textContent = `${pressure} mb`;
+      document.getElementById('visibility').textContent = `${visibility} km`;
+    }
+
+  </script>
+</body>
+</html>
