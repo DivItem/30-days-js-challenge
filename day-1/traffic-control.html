@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Traffic Signal System</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 480px;
+      background-color: #fff !important;
+      height: 90vh;
+      margin: 20px auto;
+      padding-top: 20px;
+      background: url(../image/traffic-lamp.png);
+      background-position: bottom;
+      background-repeat: no-repeat;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+    }
+    .traffic-light {
+      width: 110px;
+      height: 225px;
+      background-color: black;
+      border-radius: 10px;
+      padding: 20px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .light {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: gray;
+      margin: 0 auto;
+    }
+
+    .red {
+      background-color: gray;
+    }
+
+    .yellow {
+      background-color: gray;
+    }
+
+    .green {
+      background-color: gray;
+    }
+
+    .light.active.red {
+      background-color: #FF0000;
+    }
+
+    .light.active.yellow {
+      background-color: #FFFF00;
+    }
+
+    .light.active.green {
+      background-color: #75CF4A;
+    }
+    .container h2 {
+      position: absolute;
+      bottom: 10px;
+      font-size: 24px;
+    }
+    @media screen and (max-width: 575px) {
+      .container h2 {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="traffic-light">
+      <div class="light red"></div>
+      <div class="light yellow"></div>
+      <div class="light green"></div>
+    </div>
+    <h2>- Traffic Signal System -</h2>
+  </div>
+
+  <script>
+    const lights = document.querySelectorAll('.light');
+    let activeIndex = 0;
+
+    function changeLight() {
+      // Remove the "active" class from all lights
+      lights.forEach(light => light.classList.remove('active'));
+
+      // Add the "active" class to the current light
+      lights[activeIndex].classList.add('active');
+
+      // Update the activeIndex for the next light
+      activeIndex = (activeIndex + 1) % lights.length;
+    }
+
+    // Traffic light system
+    setInterval(changeLight, 5000); // Change light every 3 minutes (180,000 ms)
+
+    // Initialize the first light
+    changeLight();
+  </script>
+</body>
+</html>
